@@ -81,9 +81,7 @@
         return false;
       }
       for (i = 0; i < text.length; i++) {
-        if (((text[i] < 'a') ||
-            (text[i] > 'z')) &&
-            (text[i] != "'")) {
+        if (text[i] < 'a' || text[i] > 'z') {
           if (collectingWord) {
             wordCount++;
             // check to see if word already exists
