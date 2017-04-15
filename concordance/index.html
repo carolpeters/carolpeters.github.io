@@ -34,7 +34,6 @@
       </form>
       <br>
       <h6 id="doing"></h6>
-      <h6 id="done"><h6>
       <ul id="list" style="list-style-type:none">
       </ul>
     </div>
@@ -54,13 +53,16 @@
     form.onsubmit = function (e) {
       e.preventDefault();
       var text = form.textblock.value;
-      text = text.toLowerCase();
-      var wordCount = 0;
+      text = text.replace(/\u2018/g, "'")
+                 .replace(/\u2019/g, "'")
+                 .replace(/\u201c/g, "")
+                 .replace(/\u201d/g, "")
+                 .toLowerCase();
       var charCount = 0;
       var currentWord = [];
       var words = [];
+      myRegExp = /[a-z0-9-']/;
       collectingWord = false;
-      var myRegExp = /^[a-z0-9']/;
       function arrayCompare (a1, a2) {
         if (a1.length != a2.length) {
           return false;
@@ -81,53 +83,48 @@
         }
         return false;
       }
+      function saveWord () {
+        if (currentWord[0] === "'" &&
+            currentWord[currentWord.length - 1] === "'") {
+          currentWord.shift();
+          currentWord.pop();
+        }
+        if (!doesWordExist (currentWord)) { // new word?
+          words.push ({ // save it
+            num: 1,
+            word: currentWord
+          });
+        }
+        collectingWord = false;
+        charCount = 0;
+        currentWord = [];
+      }
       for (i = 0; i < text.length; i++) {
-        if (text[i] < 'a' || text[i] > 'z') {
+        if (!myRegExp.test(text[i])) { // not a word char
           if (collectingWord) {
-            wordCount++;
-            // check to see if word already exists
-            if (!doesWordExist (currentWord)) {
-              words.push ({
-                num: 1,
-                word: currentWord
-              });
-            }
-            collectingWord = false;
-            charCount = 0;
-            currentWord = [];
+            saveWord();
           }
-        } else {
+        } else { // word char means start of new word
           collectingWord = true;
           currentWord[charCount] = text[i];
           charCount++;
           }
         }
-      if (collectingWord) {
-        if (!doesWordExist (currentWord)) {
-          words.push ({
-            num: 1,
-            word: currentWord
-          });
-        }
+      if (collectingWord) { // save final word
+        saveWord();
       }
       words.sort(function (a, b) {
         return +(a.word > b.word) ||
         +(a.word === b.word) -1;
       });
       document.getElementById("doing").innerHTML
-        = "";
-      document.getElementById("done").innerHTML
-          = "word/frequency list:";
+        = "word/frequency list:";
       for (i = 0; i < words.length; i++) {
         var node = document.createElement('li');
-        var stg = words[i].word.join("");
         var textnode = document.createTextNode(
-            words[i].num + ' ' + stg);
+            words[i].num + ' ' + words[i].word.join(""));
         node.appendChild(textnode);
         document.getElementById("list").appendChild(node);
-//        newE.appendChild(newContent);
-//        var currentE = document.getElementById('b');
-//        document.body.insertBefore(newE, currentE);
       }
     }
     </script>
