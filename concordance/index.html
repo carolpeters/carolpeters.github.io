@@ -60,6 +60,7 @@
       var currentWord = [];
       var words = [];
       collectingWord = false;
+      var myRegExp = /^[a-z0-9']/;
       function arrayCompare (a1, a2) {
         if (a1.length != a2.length) {
           return false;
@@ -81,7 +82,7 @@
         return false;
       }
       for (i = 0; i < text.length; i++) {
-        if (text[i] < 'a' || text[i] > 'z') {
+        if (! myRe.test(text[i]) {
           if (collectingWord) {
             wordCount++;
             // check to see if word already exists
