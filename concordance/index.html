@@ -89,10 +89,12 @@
           currentWord.shift();
           currentWord.pop();
         }
+        var stg = currentWord.join("");
+        console.log(stg);
         if (!doesWordExist (currentWord)) { // new word?
           words.push ({ // save it
             num: 1,
-            word: currentWord
+            word: stg
           });
         }
         collectingWord = false;
@@ -114,15 +116,19 @@
         saveWord();
       }
       words.sort(function (a, b) {
-        return +(a.word > b.word) ||
-        +(a.word === b.word) -1;
+        if (a.num === b.num) {
+          var x = a.word, y = b.word;
+          return x < y ? -1 : x > y ? 1 : 0;
+        } else {
+          return b.num - a.num;
+        }
       });
       document.getElementById("doing").innerHTML
         = "word/frequency list:";
       for (i = 0; i < words.length; i++) {
         var node = document.createElement('li');
         var textnode = document.createTextNode(
-            words[i].num + ' ' + words[i].word.join(""));
+            words[i].num + ' ' + words[i].word);
         node.appendChild(textnode);
         document.getElementById("list").appendChild(node);
       }
